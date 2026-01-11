@@ -1,0 +1,7 @@
+{
+  "name": "Santo Nordeste",
+  "description": "Um guia gastronômico completo para descobrir e preparar as melhores receitas da culinária nordestina brasileira, com suporte a imagens geradas por IA e narração das receitas.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
