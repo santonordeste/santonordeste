@@ -2,9 +2,18 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Recipe } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Função para obter a chave de forma segura em diferentes ambientes
+const getApiKey = () => {
+  return (window as any).GEMINI_API_KEY || process.env.API_KEY || '';
+};
+
+const getAIInstance = () => {
+  const key = getApiKey();
+  return new GoogleGenAI({ apiKey: key });
+};
 
 export const fetchRecipe = async (query: string, mode: 'traditional' | 'pantry' = 'traditional'): Promise<Recipe> => {
+  const ai = getAIInstance();
   const prompt = mode === 'traditional' 
     ? `Gere uma receita detalhada de comida nordestina baseada em: ${query}. A resposta deve estar em português do Brasil.`
     : `Crie uma receita criativa e autêntica da culinária nordestina brasileira usando EXCLUSIVAMENTE ou como base principal estes ingredientes que tenho em casa: ${query}. Você pode assumir que o usuário tem itens básicos como sal, óleo e água. A resposta deve estar em português do Brasil.`;
@@ -51,6 +60,7 @@ export const fetchRecipe = async (query: string, mode: 'traditional' | 'pantry' 
 
 export const generateFoodImage = async (foodName: string): Promise<string | null> => {
   try {
+    const ai = getAIInstance();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
@@ -78,6 +88,7 @@ export const generateFoodImage = async (foodName: string): Promise<string | null
 
 export const generateRecipeAudio = async (text: string): Promise<string | null> => {
   try {
+    const ai = getAIInstance();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: `Narração da receita: ${text}` }] }],
